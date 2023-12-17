@@ -1,6 +1,6 @@
 import {tasksActions, tasksReducer, TasksStateType, tasksThunks} from "features/TodolistsList/tasks.reducer";
-import { TaskPriorities, TaskStatuses } from "api/todolists-api";
-import { todolistsActions } from "features/TodolistsList/todolists.reducer";
+import {TaskPriorities, TaskStatuses} from "api/todolists-api";
+import {todolistsActions} from "features/TodolistsList/todolists.reducer";
 
 let startState: TasksStateType = {};
 beforeEach(() => {
@@ -96,7 +96,7 @@ test("correct task should be deleted from correct array", () => {
 
 test("correct task should be added to correct array", () => {
   //const action = addTaskAC("juce", "todolistId2");
-  const action = tasksActions.addTask({
+  const action = tasksThunks.addTask.fulfilled({
     task: {
       todoListId: "todolistId2",
       title: "juce",
@@ -109,7 +109,7 @@ test("correct task should be added to correct array", () => {
       startDate: "",
       id: "id exists",
     },
-  });
+  },'requestId',{title:'juce',todolistId:"todolistId2"});
 
   const endState = tasksReducer(startState, action);
 
@@ -121,11 +121,11 @@ test("correct task should be added to correct array", () => {
 });
 
 test("status of specified task should be changed", () => {
-  const action = tasksActions.updateTask({
+  const action = tasksThunks.updateTask.fulfilled({
     taskId: "2",
-    model: { status: TaskStatuses.New },
+    domainModel: { status: TaskStatuses.New },
     todolistId: "todolistId2",
-  });
+  },'requestId',{taskId:'2',domainModel:{status:TaskStatuses.New},todolistId:"todolistId2"});
 
   const endState = tasksReducer(startState, action);
 
@@ -134,7 +134,9 @@ test("status of specified task should be changed", () => {
 });
 
 test("title of specified task should be changed", () => {
-  const action = tasksActions.updateTask({ taskId: "2", model: { title: "yogurt" }, todolistId: "todolistId2" });
+  const action = tasksThunks.updateTask.fulfilled(
+      { taskId: "2", domainModel: { title: "yogurt" }, todolistId: "todolistId2" },
+      'requestId',{taskId:'2',domainModel:{title: "yogurt"},todolistId:"todolistId2"});
 
   const endState = tasksReducer(startState, action);
 
