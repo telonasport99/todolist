@@ -2,7 +2,7 @@ import {
   FilterValuesType,
   TodolistDomainType,
   todolistsActions,
-  todolistsReducer,
+  todolistsReducer, todolistsThunks,
 } from "features/TodolistsList/todolists.reducer";
 import { v1 } from "uuid";
 import { TodolistType } from "api/todolists-api";
@@ -22,7 +22,8 @@ beforeEach(() => {
 });
 
 test("correct todolist should be removed", () => {
-  const endState = todolistsReducer(startState, todolistsActions.removeTodolist({ id: todolistId1 }));
+  const endState = todolistsReducer(startState,
+      todolistsThunks.removeTodo.fulfilled({ id: todolistId1 },'requestId',{ id: todolistId1 }));
 
   expect(endState.length).toBe(1);
   expect(endState[0].id).toBe(todolistId2);
@@ -65,7 +66,7 @@ test("correct filter of todolist should be changed", () => {
   expect(endState[1].filter).toBe(newFilter);
 });
 test("todolists should be added", () => {
-  const action = todolistsActions.setTodolists({ todolists: startState });
+  const action = todolistsThunks.fetchTodolists.fulfilled({ todolists: startState },'requestId');
 
   const endState = todolistsReducer([], action);
 
