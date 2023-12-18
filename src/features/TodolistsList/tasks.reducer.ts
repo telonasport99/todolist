@@ -1,11 +1,11 @@
-import {TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType} from "api/todolists-api";
+import {ResultCode, TaskPriorities, TaskStatuses, TaskType, todolistsAPI, UpdateTaskModelType} from "api/todolists-api";
 import {AppThunk} from "app/store";
-import {handleServerAppError, handleServerNetworkError} from "utils/error-utils";
 import {appActions} from "app/app.reducer";
 import {todolistsActions, todolistsThunks} from "features/TodolistsList/todolists.reducer";
 import { createSlice} from "@reduxjs/toolkit";
 import {clearTasksAndTodolists} from "common/actions/common.actions";
 import {createAppAsyncThunk} from "../../utils/create-app-async-thunk";
+import {handleServerAppError, handleServerNetworkError} from "utils";
 
 const initialState: TasksStateType = {};
 
@@ -79,7 +79,7 @@ const addTask=createAppAsyncThunk<{ task:TaskType },{title: string, todolistId: 
         try {
             dispatch(appActions.setAppStatus({status: "loading"}));
              const  res = await todolistsAPI.createTask(arg.todolistId,arg.title)
-                    if (res.data.resultCode === 0) {
+                    if (res.data.resultCode === ResultCode.success) {
                         const task = res.data.data.item;
                         dispatch(appActions.setAppStatus({status: "succeeded"}));
                         return {task};
