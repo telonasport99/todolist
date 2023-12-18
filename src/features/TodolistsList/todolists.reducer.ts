@@ -12,12 +12,6 @@ const slice = createSlice({
     name: "todo",
     initialState,
     reducers: {
-        changeTodolistTitle: (state, action: PayloadAction<{ id: string; title: string }>) => {
-            const todo = state.find((todo) => todo.id === action.payload.id);
-            if (todo) {
-                todo.title = action.payload.title;
-            }
-        },
         changeTodolistFilter: (state, action: PayloadAction<{ id: string; filter: FilterValuesType }>) => {
             const todo = state.find((todo) => todo.id === action.payload.id);
             if (todo) {
@@ -45,6 +39,12 @@ const slice = createSlice({
             .addCase(addTodo.fulfilled,(state,action)=>{
                 const newTodolist: TodolistDomainType = {...action.payload.todolist, filter: "all", entityStatus: "idle"};
                 state.unshift(newTodolist);
+            })
+            .addCase(changeTodo.fulfilled,(state, action)=>{
+                const todo = state.find((todo) => todo.id === action.payload.id);
+                if (todo) {
+                    todo.title = action.payload.title;
+                }
             })
     },
 });
@@ -95,14 +95,19 @@ const addTodo = createAppAsyncThunk<{todolist:TodolistType},{title:string}>(`tod
         }
 })
 
+const changeTodo = createAppAsyncThunk<{ id: string, title: string }, { id: string, title: string }>(`todo/changeTdo`,
+    async (arg, thunkAPI)=>{
+        const {dispatch,rejectWithValue}=thunkAPI
+            try {
+                const res = await todolistsAPI.updateTodolist(arg.id, arg.title)
+                return {id:arg.id,title:arg.title}
+            }
+            catch (e) {
+                handleServerNetworkError(e, dispatch)
+                return rejectWithValue(null)
+            }
+    })
 // thunks
-export const changeTodolistTitleTC = (id: string, title: string): AppThunk => {
-    return (dispatch) => {
-        todolistsAPI.updateTodolist(id, title).then((res) => {
-            dispatch(todolistsActions.changeTodolistTitle({id, title}));
-        });
-    };
-};
 
 // types
 export type FilterValuesType = "all" | "active" | "completed";
@@ -112,4 +117,4 @@ export type TodolistDomainType = TodolistType & {
 };
 export const todolistsReducer = slice.reducer;
 export const todolistsActions = slice.actions;
-export const todolistsThunks = {fetchTodolists,removeTodo,addTodo}
+export const todolistsThunks = {fetchTodolists,removeTodo,addTodo,changeTodo}
