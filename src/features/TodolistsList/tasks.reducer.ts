@@ -6,6 +6,7 @@ import {createAppAsyncThunk} from "common/utils/create-app-async-thunk";
 import {handleServerAppError, handleServerNetworkError} from "common/utils";
 import {ResultCode, TaskType, todolistsAPI, UpdateTaskModelType} from "features/TodolistsList/todolistApi";
 import {TaskPriorities, TaskStatuses} from "common/enum/enum";
+import app from "app/App";
 
 const initialState: TasksStateType = {};
 
@@ -131,8 +132,15 @@ const removeTask=createAppAsyncThunk<{taskId: string, todolistId: string},{taskI
     async (arg, thunkAPI)=>{
         const {dispatch,rejectWithValue} = thunkAPI
         try {
-             const res = todolistsAPI.deleteTask(arg.todolistId, arg.taskId)
-            return arg
+            dispatch(appActions.setAppStatus({status:'loading'}))
+             const res = await todolistsAPI.deleteTask(arg.todolistId, arg.taskId)
+                if (res.data.resultCode === ResultCode.success){
+                    dispatch(appActions.setAppStatus({status:'succeeded'}))
+                    return arg
+                }else {
+                    handleServerAppError(res.data,dispatch)
+                    return rejectWithValue(null)
+                }
         }catch (e) {
             handleServerNetworkError(e,dispatch)
             return rejectWithValue(null)
