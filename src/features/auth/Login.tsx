@@ -5,7 +5,7 @@ import { loginTC } from "features/auth/auth.reducer";
 import { Navigate } from "react-router-dom";
 import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, TextField } from "@mui/material";
 import {selectIsLoggedIn} from "./auth.selectors";
-import {useAppDispatch} from "hooks/useAppDispatch";
+import {useAppDispatch} from "common/hooks/useAppDispatch";
 
 export const Login = () => {
   const dispatch = useAppDispatch();
