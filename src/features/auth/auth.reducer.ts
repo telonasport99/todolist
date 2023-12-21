@@ -1,9 +1,10 @@
 import { handleServerAppError, handleServerNetworkError } from "common/utils";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppThunk } from "app/store";
+import { createSlice } from "@reduxjs/toolkit";
 import { appActions } from "app/app.reducer";
 import { clearTasksAndTodolists } from "common/actions/common.actions";
 import {authAPI, LoginParamsType} from "features/auth/authApi";
+import {createAppAsyncThunk} from "common/utils/create-app-async-thunk";
+import {ResultCode} from "features/TodolistsList/todolistApi";
 
 const slice = createSlice({
   name: "auth",
@@ -11,49 +12,62 @@ const slice = createSlice({
     isLoggedIn: false,
   },
   reducers: {
-    setIsLoggedIn: (state, action: PayloadAction<{ isLoggedIn: boolean }>) => {
-      state.isLoggedIn = action.payload.isLoggedIn;
-    },
+      setIsLoggedIn:(state, action)=>{
+          state.isLoggedIn = action.payload.isLoggedIn
+      }
   },
+   extraReducers:builder => {
+      builder.addCase(login.fulfilled,(state, action)=>{
+          state.isLoggedIn = action.payload.isLoggedIn
+      })
+          .addCase(logout.fulfilled,(state, action)=>{
+              state.isLoggedIn = action.payload.isLoggedIn
+          })
+   }
 });
+
+const login = createAppAsyncThunk  <{ isLoggedIn:boolean},LoginParamsType>(`auth/login`,
+    async (arg, thunkAPI)=>{
+        const {dispatch,rejectWithValue}=thunkAPI
+        try {
+            dispatch(appActions.setAppStatus({ status: "loading" }));
+        const res = await authAPI.login(arg)
+            if(res.data.resultCode===ResultCode.success){
+                dispatch(appActions.setAppStatus({ status: "succeeded" }));
+                return {isLoggedIn:true}
+            }else {
+                 handleServerAppError(res.data,dispatch)
+                return rejectWithValue(null)
+            }
+        }catch (e) {
+            handleServerNetworkError(e, dispatch);
+            return rejectWithValue(null)
+        }
+})
+const logout = createAppAsyncThunk <{isLoggedIn: false}>(`auth/logout`,
+    async (arg, thunkAPI)=>{
+    const {dispatch,rejectWithValue} = thunkAPI
+        try {
+            dispatch(appActions.setAppStatus({ status: "loading" }));
+            const res = await authAPI.logout()
+                if(res.data.resultCode===ResultCode.success){
+                    dispatch(appActions.setAppStatus({ status: "succeeded" }));
+                    dispatch(clearTasksAndTodolists());
+                    return {isLoggedIn: false}
+                }else {
+                    handleServerAppError(res.data,dispatch)
+                   return  rejectWithValue(null)
+                }
+        }catch (e) {
+            handleServerNetworkError(e,dispatch)
+            return rejectWithValue(null)
+        }
+})
+
+
+// thunks
+
 
 export const authReducer = slice.reducer;
 export const authActions = slice.actions;
-
-// thunks
-export const loginTC =
-  (data: LoginParamsType): AppThunk =>
-  (dispatch) => {
-    dispatch(appActions.setAppStatus({ status: "loading" }));
-    authAPI
-      .login(data)
-      .then((res) => {
-        if (res.data.resultCode === 0) {
-          dispatch(authActions.setIsLoggedIn({ isLoggedIn: true }));
-          dispatch(appActions.setAppStatus({ status: "succeeded" }));
-        } else {
-          handleServerAppError(res.data, dispatch);
-        }
-      })
-      .catch((error) => {
-        handleServerNetworkError(error, dispatch);
-      });
-  };
-
-export const logoutTC = (): AppThunk => (dispatch) => {
-  dispatch(appActions.setAppStatus({ status: "loading" }));
-  authAPI
-    .logout()
-    .then((res) => {
-      if (res.data.resultCode === 0) {
-        dispatch(authActions.setIsLoggedIn({ isLoggedIn: false }));
-        dispatch(clearTasksAndTodolists());
-        dispatch(appActions.setAppStatus({ status: "succeeded" }));
-      } else {
-        handleServerAppError(res.data, dispatch);
-      }
-    })
-    .catch((error) => {
-      handleServerNetworkError(error, dispatch);
-    });
-};
+export const authThunks = {login,logout}
