@@ -68,7 +68,6 @@ const initializeApp = createAppAsyncThunk<{ isLoggedIn: true },undefined>(`app/i
         const {dispatch,rejectWithValue}=thunkAPI
         try {
             const res = await authAPI.me()
-            dispatch(appActions.setAppInitialized({isInitialized:true}))
             if (res.data.resultCode===ResultCode.success){
                 return{isLoggedIn: true}
             }else {
@@ -78,6 +77,8 @@ const initializeApp = createAppAsyncThunk<{ isLoggedIn: true },undefined>(`app/i
         }catch (e) {
             handleServerNetworkError(e,dispatch)
           return   rejectWithValue(null)
+        }finally {
+            dispatch(appActions.setAppInitialized({isInitialized:true}))
         }
     })
 // thunks
