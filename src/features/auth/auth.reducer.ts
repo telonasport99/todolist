@@ -5,6 +5,7 @@ import { clearTasksAndTodolists } from "common/actions/common.actions";
 import {authAPI, LoginParamsType} from "features/auth/authApi";
 import {createAppAsyncThunk} from "common/utils/create-app-async-thunk";
 import {ResultCode} from "features/TodolistsList/todolistApi";
+import {BaseResponseType} from "common/types";
 
 const slice = createSlice({
   name: "auth",
@@ -36,7 +37,7 @@ const login = createAppAsyncThunk  <{ isLoggedIn:boolean},LoginParamsType>(`auth
                 return {isLoggedIn:true}
             }else {
                  handleServerAppError(res.data,dispatch)
-                return rejectWithValue(null)
+                return rejectWithValue(res.data)
             }
         }catch (e) {
             handleServerNetworkError(e, dispatch);
