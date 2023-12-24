@@ -1,12 +1,18 @@
 import React from "react";
-import {useFormik} from "formik";
+import {FormikHelpers, useFormik} from "formik";
 import {useSelector} from "react-redux";
 import {Navigate} from "react-router-dom";
 import {Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, TextField} from "@mui/material";
 import {selectIsLoggedIn} from "./auth.selectors";
 import {useAppDispatch} from "common/hooks/useAppDispatch";
 import {authThunks} from "features/auth/auth.reducer";
+import {LoginParamsType} from "features/auth/authApi";
 
+type FormsValues={
+    email?: string
+    password?: string
+    rememberMe?: boolean
+}
 export const Login = () => {
     const dispatch = useAppDispatch();
 
@@ -31,7 +37,7 @@ export const Login = () => {
             password: "",
             rememberMe: false,
         },
-        onSubmit: (values) => {
+        onSubmit: (values,formikHelpers:FormikHelpers<LoginParamsType>) => {
             dispatch(authThunks.login(values))
                 .unwrap()
                 .then((res) => {
