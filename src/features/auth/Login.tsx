@@ -9,9 +9,9 @@ import {authThunks} from "features/auth/auth.reducer";
 import {LoginParamsType} from "features/auth/authApi";
 
 type FormsValues={
-    email?: string
-    password?: string
-    rememberMe?: boolean
+    email: string
+    password: string
+    rememberMe: boolean
 }
 export const Login = () => {
     const dispatch = useAppDispatch();
@@ -37,7 +37,7 @@ export const Login = () => {
             password: "",
             rememberMe: false,
         },
-        onSubmit: (values,formikHelpers:FormikHelpers<LoginParamsType>) => {
+        onSubmit: (values,formikHelpers:FormikHelpers<FormsValues>) => {
             dispatch(authThunks.login(values))
                 .unwrap()
                 .then((res) => {
