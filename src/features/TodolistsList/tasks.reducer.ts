@@ -3,11 +3,9 @@ import { todolistsThunks} from "features/TodolistsList/todolists.reducer";
 import { createSlice} from "@reduxjs/toolkit";
 import {clearTasksAndTodolists} from "common/actions/common.actions";
 import {createAppAsyncThunk} from "common/utils/create-app-async-thunk";
-import {handleServerAppError, handleServerNetworkError} from "common/utils";
+import {handleServerAppError, handleServerNetworkError, thunkTryCatch} from "common/utils";
 import {ResultCode, TaskType, todolistsAPI, UpdateTaskModelType} from "features/TodolistsList/todolistApi";
 import {TaskPriorities, TaskStatuses} from "common/enum/enum";
-import app from "app/App";
-import {thunkTryCatch} from "common/utils/thunk-try-catch";
 
 const initialState: TasksStateType = {};
 
