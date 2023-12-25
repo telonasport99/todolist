@@ -7,6 +7,7 @@ import {handleServerAppError, handleServerNetworkError} from "common/utils";
 import {ResultCode, TaskType, todolistsAPI, UpdateTaskModelType} from "features/TodolistsList/todolistApi";
 import {TaskPriorities, TaskStatuses} from "common/enum/enum";
 import app from "app/App";
+import {thunkTryCatch} from "common/utils/thunk-try-catch";
 
 const initialState: TasksStateType = {};
 
@@ -73,26 +74,25 @@ const slice = createSlice({
     }
 )
 
-const addTask=createAppAsyncThunk<{ task:TaskType },{title: string, todolistId: string}>(
-    `tasks/addTask`,
-    async (arg, thunkAPI)=>{
+type AddTaskArgType = {
+    title: string,
+    todolistId: string
+}
+const addTask = createAppAsyncThunk<{ task: TaskType }, AddTaskArgType>(
+    'tasks/addTask', async (arg, thunkAPI) => {
         const {dispatch, rejectWithValue} = thunkAPI
-        try {
-            dispatch(appActions.setAppStatus({status: "loading"}));
-             const  res = await todolistsAPI.createTask(arg.todolistId,arg.title)
-                    if (res.data.resultCode === ResultCode.success) {
-                        const task = res.data.data.item;
-                        dispatch(appActions.setAppStatus({status: "succeeded"}));
-                        return {task};
-                    } else {
-                        handleServerAppError(res.data, dispatch);
-                        return rejectWithValue(null)
-                    }
-        }catch (e) {
-            handleServerNetworkError(e,dispatch)
-            return rejectWithValue(null)
-        }
-    })
+        return thunkTryCatch(thunkAPI, async () => {
+            const res = await todolistsAPI.createTask(arg.todolistId,arg.title)
+            if (res.data.resultCode === ResultCode.success) {
+                const task = res.data.data.item
+                return {task}
+            } else {
+                handleServerAppError(res.data, dispatch);
+                return rejectWithValue(null)
+            }
+        })
+    }
+)
 
 // thunks
 const updateTask = createAppAsyncThunk<ArgUpdateType,ArgUpdateType>(`tasks/updateTask`,
