@@ -7,6 +7,7 @@ import {selectIsLoggedIn} from "./auth.selectors";
 import {useAppDispatch} from "common/hooks/useAppDispatch";
 import {authThunks} from "features/auth/auth.reducer";
 import {LoginParamsType} from "features/auth/authApi";
+import {BaseResponseType} from "common/types";
 
 type FormsValues={
     email: string
@@ -40,10 +41,9 @@ export const Login = () => {
         onSubmit: (values,formikHelpers:FormikHelpers<FormsValues>) => {
             dispatch(authThunks.login(values))
                 .unwrap()
-                .then((res) => {
-                    debugger
-                }).catch((err) => {
+                .catch((err:BaseResponseType) => {
                 debugger
+                formikHelpers.setFieldError(err.fieldsErrors[0].field,err.fieldsErrors[0].error)
             })
         },
     });
@@ -70,7 +70,7 @@ export const Login = () => {
                         </FormLabel>
                         <FormGroup>
                             <TextField label="Email" margin="normal" {...formik.getFieldProps("email")} />
-                            {formik.errors.email ? <div>{formik.errors.email}</div> : null}
+                            {formik.errors.email ? <div style={{color:'red'}}>{formik.errors.email}</div> : null}
                             <TextField type="password" label="Password"
                                        margin="normal" {...formik.getFieldProps("password")} />
                             {formik.errors.password ? <div>{formik.errors.password}</div> : null}
