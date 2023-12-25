@@ -66,7 +66,7 @@ const fetchTodolists = createAppAsyncThunk<{ todolists: TodolistType[] }, void>(
 const removeTodo = createAppAsyncThunk<{ id: string }, { id: string }>(`todo/removeTodo`,
     async (arg, thunkAPI) => {
         const {dispatch, rejectWithValue} = thunkAPI
-        try {
+        return thunkTryCatch(thunkAPI,async ()=>{
             dispatch(appActions.setAppStatus({status: "loading"}));
             dispatch(todolistsActions.changeTodolistEntityStatus({id: arg.id, entityStatus: "loading"}));
             const res = await todolistsAPI.deleteTodolist(arg.id)
@@ -77,10 +77,7 @@ const removeTodo = createAppAsyncThunk<{ id: string }, { id: string }>(`todo/rem
                 handleServerAppError(res.data, dispatch)
                 return rejectWithValue(null)
             }
-        } catch (e) {
-            handleServerNetworkError(e, dispatch)
-            return rejectWithValue(null)
-        }
+        })
     })
 const addTodo = createAppAsyncThunk<{ todolist: TodolistType }, { title: string }>(`todo/addTodo`,
     async (arg, thunkAPI) => {
@@ -103,13 +100,10 @@ const addTodo = createAppAsyncThunk<{ todolist: TodolistType }, { title: string 
 const changeTodo = createAppAsyncThunk<{ id: string, title: string }, { id: string, title: string }>(`todo/changeTdo`,
     async (arg, thunkAPI) => {
         const {dispatch, rejectWithValue} = thunkAPI
-        try {
+        return thunkTryCatch(thunkAPI,async ()=>{
             const res = await todolistsAPI.updateTodolist(arg.id, arg.title)
             return {id: arg.id, title: arg.title}
-        } catch (e) {
-            handleServerNetworkError(e, dispatch)
-            return rejectWithValue(null)
-        }
+        })
     })
 // thunks
 
