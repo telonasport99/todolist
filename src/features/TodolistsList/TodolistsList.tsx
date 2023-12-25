@@ -14,6 +14,7 @@ import { selectIsLoggedIn } from "features/auth/auth.selectors";
 import { selectTasks } from "features/TodolistsList/tasks.selectors";
 import { selectTodolists } from "features/TodolistsList/todolists.selectors";
 import {TaskStatuses} from "common/enum/enum";
+import {useActions} from "common/hooks/useActions";
 
 type PropsType = {
   demo?: boolean;
@@ -25,12 +26,14 @@ export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
   const isLoggedIn = useSelector(selectIsLoggedIn);
 
   const dispatch = useAppDispatch();
+  const {fetchTodolists,addTodo,changeTodo,removeTodo,changeTodolistFilter} = useActions({...todolistsThunks,...todolistsActions})
+  const {addTask:addTaskThunk} = useActions(tasksThunks)
 
   useEffect(() => {
     if (demo || !isLoggedIn) {
       return;
     }
-    dispatch(todolistsThunks.fetchTodolists());
+    fetchTodolists();
   }, []);
 
   const removeTask = useCallback(function (id: string, todolistId: string) {
@@ -39,8 +42,7 @@ export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
   }, []);
 
   const addTask = useCallback(function (title: string, todolistId: string) {
-    const thunk = tasksThunks.addTask({title, todolistId});
-    dispatch(thunk);
+    addTaskThunk({title, todolistId});
   }, []);
 
   const changeStatus = useCallback(function (id: string, status: TaskStatuses, todolistId: string) {
@@ -52,20 +54,20 @@ export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
   }, []);
 
   const changeFilter = useCallback(function (filter: FilterValuesType, id: string) {
-    dispatch(todolistsActions.changeTodolistFilter({ id, filter }));
+    changeTodolistFilter({ id, filter });
   }, []);
 
-  const removeTodolist = useCallback(function (id: string) {
-    dispatch(todolistsThunks.removeTodo({id}));
+  const removeTodolistCB = useCallback(function (id: string) {
+    removeTodo({id});
   }, []);
 
-  const changeTodolistTitle = useCallback(function (id: string, title: string) {
-    dispatch(todolistsThunks.changeTodo({title,id}));
+  const changeTodolistTitleCB = useCallback(function (id: string, title: string) {
+changeTodo({title,id});
   }, []);
 
-  const addTodolist = useCallback(
+  const addTodolistCB = useCallback(
     (title: string) => {
-      dispatch(todolistsThunks.addTodo({title}));
+      addTodo({title});
     },
     [dispatch]
   );
@@ -77,7 +79,7 @@ export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
   return (
     <>
       <Grid container style={{ padding: "20px" }}>
-        <AddItemForm addItem={addTodolist} />
+        <AddItemForm addItem={addTodolistCB} />
       </Grid>
       <Grid container spacing={3}>
         {todolists.map((tl) => {
@@ -93,9 +95,9 @@ export const TodolistsList: React.FC<PropsType> = ({ demo = false }) => {
                   changeFilter={changeFilter}
                   addTask={addTask}
                   changeTaskStatus={changeStatus}
-                  removeTodolist={removeTodolist}
+                  removeTodolist={removeTodolistCB}
                   changeTaskTitle={changeTaskTitle}
-                  changeTodolistTitle={changeTodolistTitle}
+                  changeTodolistTitle={changeTodolistTitleCB}
                   demo={demo}
                 />
               </Paper>
