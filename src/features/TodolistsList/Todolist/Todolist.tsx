@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect } from "react";
 import { Task } from "./Task/Task";
 import { FilterValuesType, TodolistDomainType } from "features/TodolistsList/todolists.reducer";
-import { useAppDispatch } from "common/hooks/useAppDispatch";
 import { Button, IconButton } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import {tasksThunks} from "../tasks.reducer";
 import {EditableSpan,AddItemForm} from "common/components";
 import {TaskStatuses} from "common/enum/enum";
 import {TaskType} from "features/TodolistsList/todolistApi";
+import {useActions} from "common/hooks/useActions";
 
 type PropsType = {
   todolist: TodolistDomainType;
@@ -23,13 +23,13 @@ type PropsType = {
 };
 
 export const Todolist = React.memo(function ({ demo = false, ...props }: PropsType) {
-  const dispatch = useAppDispatch();
+  const {fetchTasks} = useActions(tasksThunks)
 
   useEffect(() => {
     if (demo) {
       return;
     }
-    dispatch(tasksThunks.fetchTasks(props.todolist.id));
+    fetchTasks(props.todolist.id)
   }, []);
 
   const addTask = useCallback(
