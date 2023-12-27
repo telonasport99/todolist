@@ -7,12 +7,14 @@ import {selectIsLoggedIn} from "./auth.selectors";
 import {authThunks} from "features/auth/auth.reducer";
 import {BaseResponseType} from "common/types";
 import {useActions} from "common/hooks/useActions";
+import {LoginParamsType} from "features/auth/authApi";
 
 type FormsValues={
     email: string
     password: string
     rememberMe: boolean
 }
+type FormikErrorType = Partial<Omit<LoginParamsType, 'captcha'>>
 export const Login = () => {
     const {login}=useActions(authThunks)
 
@@ -20,15 +22,13 @@ export const Login = () => {
 
     const formik = useFormik({
         validate: (values) => {
+            const errors:FormikErrorType={}
+
             if (!values.email) {
-                return {
-                    email: "Email is required",
-                };
+                    errors.email =  "Email is required"
             }
             if (!values.password) {
-                return {
-                    password: "Password is required",
-                };
+                    errors.password= "Password is required"
             }
         },
         initialValues: {
