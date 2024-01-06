@@ -3,7 +3,8 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {clearTasksAndTodolists} from "common/actions/common.actions";
 import {createAppAsyncThunk} from "common/utils/create-app-async-thunk";
 import {handleServerAppError, handleServerNetworkError, thunkTryCatch} from "common/utils";
-import {ResultCode, todolistsAPI, TodolistType} from "features/TodolistsList/todolistApi";
+import { todolistsAPI } from "../api/todolist/todolistApi";
+import {ResultCode, TodolistType} from "features/TodolistsList/api/todolist/todolistsApi.type";
 
 const initialState: TodolistDomainType[] = [];
 

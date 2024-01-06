@@ -1,11 +1,10 @@
-import {handleServerAppError, handleServerNetworkError, thunkTryCatch} from "common/utils";
+import {handleServerAppError, thunkTryCatch} from "common/utils";
 import {createSlice} from "@reduxjs/toolkit";
 import {appActions} from "app/app.reducer";
 import {clearTasksAndTodolists} from "common/actions/common.actions";
 import {authAPI, LoginParamsType} from "features/auth/authApi";
 import {createAppAsyncThunk} from "common/utils/create-app-async-thunk";
-import {ResultCode} from "features/TodolistsList/todolistApi";
-import {BaseResponseType} from "common/types";
+import {ResultCode} from "features/TodolistsList/api/todolist/todolistsApi.type";
 
 const slice = createSlice({
     name: "auth",

@@ -3,7 +3,7 @@ import { Checkbox, IconButton } from "@mui/material";
 import { EditableSpan } from "common/components";
 import { Delete } from "@mui/icons-material";
 import {TaskStatuses} from "common/enum/enum";
-import {TaskType} from "features/TodolistsList/todolistApi";
+import {TaskType} from "features/TodolistsList/api/tasks/taskApi.type";
 
 type TaskPropsType = {
   task: TaskType;
