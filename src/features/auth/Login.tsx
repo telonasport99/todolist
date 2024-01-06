@@ -8,44 +8,13 @@ import {authThunks} from "features/auth/auth.reducer";
 import {BaseResponseType} from "common/types";
 import {useActions} from "common/hooks/useActions";
 import {LoginParamsType} from "features/auth/authApi";
+import {useLogin} from "features/auth/lib/useLogin";
 
-type FormsValues={
-    email: string
-    password: string
-    rememberMe: boolean
-}
-type FormikErrorType = Partial<Omit<LoginParamsType, 'captcha'>>
+
 export const Login = () => {
-    const {login}=useActions(authThunks)
 
-    const isLoggedIn = useSelector(selectIsLoggedIn);
 
-    const formik = useFormik({
-        validate: (values) => {
-            const errors:FormikErrorType={}
-
-            if (!values.email) {
-                    errors.email =  "Email is required"
-            }
-            if (!values.password) {
-                    errors.password= "Password is required"
-            }
-        },
-        initialValues: {
-            email: "",
-            password: "",
-            rememberMe: false,
-        },
-        onSubmit: (values,formikHelpers:FormikHelpers<FormsValues>) => {
-            login(values)
-                .unwrap()
-                .catch((err:BaseResponseType) => {
-                    err.fieldsErrors?.forEach((fieldError)=>{
-                        formikHelpers.setFieldError(fieldError.field,fieldError.error)
-                    })
-            })
-        },
-    });
+    const {formik,isLoggedIn} = useLogin()
 
     if (isLoggedIn) {
         return <Navigate to={"/"}/>;
