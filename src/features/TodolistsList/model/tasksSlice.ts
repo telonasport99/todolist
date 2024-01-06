@@ -1,5 +1,5 @@
 import {appActions} from "app/app.reducer";
-import { todolistsThunks} from "features/TodolistsList/model/todolists.reducer";
+import { todolistsThunks} from "features/TodolistsList/model/todolistSlice";
 import { createSlice} from "@reduxjs/toolkit";
 import {clearTasksAndTodolists} from "common/actions/common.actions";
 import {createAppAsyncThunk} from "common/utils/create-app-async-thunk";
@@ -149,6 +149,5 @@ export type TasksStateType =Record<string, TaskType[]>
 export type ArgUpdateType={
     taskId: string, domainModel: UpdateDomainTaskModelType, todolistId: string
 }
-export const tasksReducer = slice.reducer;
-export const tasksActions = slice.actions;
+export const tasksSlice = slice.reducer;
 export const tasksThunks = {fetchTasks,addTask,updateTask,removeTask}
