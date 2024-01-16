@@ -14,6 +14,7 @@ import {TaskStatuses} from "common/enum/enum";
 import {useActions} from "common/hooks/useActions";
 import {TaskType} from "features/TodolistsList/api/tasks/taskApi.type";
 import FilterTasksButtons from "features/TodolistsList/ui/Todolist/FilterTasksButtons/FilterTasksButtons";
+import Tasks from "features/TodolistsList/ui/Todolist/Tasks/Tasks";
 
 type Props = {
   todolist: TodolistDomainType;
@@ -51,19 +52,6 @@ export const Todolist = React.memo(function ({ demo = false, ...props }: Props) 
     },
     [props.todolist.id]
   );
-
-
-
-
-  let tasksForTodolist = props.tasks;
-
-  if (props.todolist.filter === "active") {
-    tasksForTodolist = props.tasks.filter((t) => t.status === TaskStatuses.New);
-  }
-  if (props.todolist.filter === "completed") {
-    tasksForTodolist = props.tasks.filter((t) => t.status === TaskStatuses.Completed);
-  }
-
   return (
     <div>
       <h3>
@@ -73,15 +61,7 @@ export const Todolist = React.memo(function ({ demo = false, ...props }: Props) 
         </IconButton>
       </h3>
       <AddItemForm addItem={addTask} disabled={props.todolist.entityStatus === "loading"} />
-      <div>
-        {tasksForTodolist.map((t) => (
-          <Task
-            key={t.id}
-            task={t}
-            todolistId={props.todolist.id}
-          />
-        ))}
-      </div>
+      <Tasks todolist={props.todolist} tasks={props.tasks}/>
       <div style={{ paddingTop: "10px" }}>
         <FilterTasksButtons filter={props.todolist.filter} id={props.todolist.id}/>
       </div>
