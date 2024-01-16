@@ -45,13 +45,7 @@ export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
         addTaskThunk({title, todolistId});
     }, []);
 
-    const changeStatus = useCallback(function (id: string, status: TaskStatuses, todolistId: string) {
-        updateTaskThunk({taskId: id, domainModel: {status}, todolistId});
-    }, []);
 
-    const changeTaskTitle = useCallback(function (id: string, newTitle: string, todolistId: string) {
-        updateTaskThunk({taskId: id, domainModel: {title: newTitle}, todolistId});
-    }, []);
 
     const changeFilter = useCallback(function (filter: FilterValuesType, id: string) {
         changeTodolistFilter({id, filter});
@@ -93,9 +87,7 @@ export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
                                     tasks={allTodolistTasks}
                                     changeFilter={changeFilter}
                                     addTask={addTask}
-                                    changeTaskStatus={changeStatus}
                                     removeTodolist={removeTodolistCB}
-                                    changeTaskTitle={changeTaskTitle}
                                     changeTodolistTitle={changeTodolistTitleCB}
                                     demo={demo}
                                 />
