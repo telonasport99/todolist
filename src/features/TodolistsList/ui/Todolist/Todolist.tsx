@@ -15,6 +15,7 @@ import {useActions} from "common/hooks/useActions";
 import {TaskType} from "features/TodolistsList/api/tasks/taskApi.type";
 import FilterTasksButtons from "features/TodolistsList/ui/Todolist/FilterTasksButtons/FilterTasksButtons";
 import Tasks from "features/TodolistsList/ui/Todolist/Tasks/Tasks";
+import TodolistTitle from "features/TodolistsList/ui/Todolist/TodolistTitle/TodolistTitle";
 
 type Props = {
   todolist: TodolistDomainType;
@@ -24,11 +25,7 @@ type Props = {
 
 export const Todolist = React.memo(function ({ demo = false, ...props }: Props) {
   const {fetchTasks,addTask:addTaskThunk} = useActions(tasksThunks)
-  const {
-    changeTodo,
-    removeTodo,
-    changeTodolistFilter
-  } = useActions({...todolistsThunks, ...todolistsActions})
+
 
   useEffect(() => {
     if (demo) {
@@ -42,24 +39,9 @@ export const Todolist = React.memo(function ({ demo = false, ...props }: Props) 
       addTaskThunk({title,todolistId:props.todolist.id});
     },[props.todolist.id]
   )
-  const removeTodolist = () => {
-    removeTodo({id:props.todolist.id});
-  };
-
-  const changeTodolistTitle = useCallback(
-    (title: string) => {
-     changeTodo({id:props.todolist.id, title});
-    },
-    [props.todolist.id]
-  );
   return (
     <div>
-      <h3>
-        <EditableSpan value={props.todolist.title} onChange={changeTodolistTitle} />
-        <IconButton onClick={removeTodolist} disabled={props.todolist.entityStatus === "loading"}>
-          <Delete />
-        </IconButton>
-      </h3>
+      <TodolistTitle todolist={props.todolist}/>
       <AddItemForm addItem={addTask} disabled={props.todolist.entityStatus === "loading"} />
       <Tasks todolist={props.todolist} tasks={props.tasks}/>
       <div style={{ paddingTop: "10px" }}>
