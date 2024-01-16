@@ -13,6 +13,7 @@ import {EditableSpan,AddItemForm} from "common/components";
 import {TaskStatuses} from "common/enum/enum";
 import {useActions} from "common/hooks/useActions";
 import {TaskType} from "features/TodolistsList/api/tasks/taskApi.type";
+import FilterTasksButtons from "features/TodolistsList/ui/Todolist/FilterTasksButtons/FilterTasksButtons";
 
 type Props = {
   todolist: TodolistDomainType;
@@ -35,9 +36,6 @@ export const Todolist = React.memo(function ({ demo = false, ...props }: Props) 
     fetchTasks(props.todolist.id)
   }, []);
 
-
-
-
   const addTask = useCallback(
     (title: string) => {
       addTaskThunk({title,todolistId:props.todolist.id});
@@ -55,19 +53,7 @@ export const Todolist = React.memo(function ({ demo = false, ...props }: Props) 
   );
 
 
-  const onAllClickHandler = useCallback(
-    () => changeTodolistFilter({filter:"all", id:props.todolist.id}),
-    [props.todolist.id]
-  );
 
-  const onActiveClickHandler = useCallback(
-    () => changeTodolistFilter({filter:"active", id: props.todolist.id}),
-    [props.todolist.id]
-  );
-  const onCompletedClickHandler = useCallback(
-    () => changeTodolistFilter({filter:"completed", id:props.todolist.id}),
-    [props.todolist.id]
-  );
 
   let tasksForTodolist = props.tasks;
 
@@ -97,27 +83,7 @@ export const Todolist = React.memo(function ({ demo = false, ...props }: Props) 
         ))}
       </div>
       <div style={{ paddingTop: "10px" }}>
-        <Button
-          variant={props.todolist.filter === "all" ? "outlined" : "text"}
-          onClick={onAllClickHandler}
-          color={"inherit"}
-        >
-          All
-        </Button>
-        <Button
-          variant={props.todolist.filter === "active" ? "outlined" : "text"}
-          onClick={onActiveClickHandler}
-          color={"primary"}
-        >
-          Active
-        </Button>
-        <Button
-          variant={props.todolist.filter === "completed" ? "outlined" : "text"}
-          onClick={onCompletedClickHandler}
-          color={"secondary"}
-        >
-          Completed
-        </Button>
+        <FilterTasksButtons filter={props.todolist.filter} id={props.todolist.id}/>
       </div>
     </div>
   );
