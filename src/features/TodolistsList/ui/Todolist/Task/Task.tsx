@@ -17,8 +17,7 @@ export const Task = React.memo(({task,todolistId}: Props) => {
     const removeTaskHandler = () => {removeTaskThunk({taskId: task.id, todolistId: todolistId})}
 
 
-  const changeTaskStatusHandler =
-    (e: ChangeEvent<HTMLInputElement>) => {
+  const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
       let newIsDoneValue = e.currentTarget.checked;
       const status = newIsDoneValue ? TaskStatuses.Completed : TaskStatuses.New
      updateTaskThunk({
@@ -28,13 +27,12 @@ export const Task = React.memo(({task,todolistId}: Props) => {
         });
     };
 
-  const changeTaskTitleHandler =
-    (newValue: string) => {
+  const changeTaskTitleHandler =useCallback( (title: string) => {
         updateTaskThunk({
             taskId:task.id,
-            domainModel:{title:newValue},
+            domainModel:{title},
             todolistId});
-    }
+    },[todolistId,task.id])
 
   return (
     <div key={task.id} className={task.status === TaskStatuses.Completed ? s.isDone : ""}>

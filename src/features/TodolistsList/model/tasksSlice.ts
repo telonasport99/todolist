@@ -75,7 +75,7 @@ type AddTaskArgType = {
     title: string,
     todolistId: string
 }
-const addTask = createAppAsyncThunk<{ task: TaskType }, AddTaskArgType>(
+ const addTask = createAppAsyncThunk<{ task: TaskType }, AddTaskArgType>(
     'tasks/addTask', async (arg, thunkAPI) => {
         const {dispatch, rejectWithValue} = thunkAPI
         return thunkTryCatch(thunkAPI, async () => {

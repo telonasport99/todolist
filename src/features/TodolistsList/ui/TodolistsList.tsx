@@ -26,37 +26,13 @@ export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
     const {
         fetchTodolists,
         addTodo,
-        changeTodo,
-        removeTodo,
-        changeTodolistFilter
     } = useActions({...todolistsThunks, ...todolistsActions})
-    const {addTask: addTaskThunk, removeTask: removeTaskThunk, updateTask: updateTaskThunk} = useActions(tasksThunks)
     const dispatch = useAppDispatch()
     useEffect(() => {
         if (demo || !isLoggedIn) {
             return; 
         }
         fetchTodolists();
-    }, []);
-
-
-
-    const addTask = useCallback(function (title: string, todolistId: string) {
-        addTaskThunk({title, todolistId});
-    }, []);
-
-
-
-    const changeFilter = useCallback(function (filter: FilterValuesType, id: string) {
-        changeTodolistFilter({id, filter});
-    }, []);
-
-    const removeTodolistCB = useCallback(function (id: string) {
-        removeTodo({id});
-    }, []);
-
-    const changeTodolistTitleCB = useCallback(function (id: string, title: string) {
-        changeTodo({title, id});
     }, []);
 
     const addTodolistCB = useCallback(
@@ -85,10 +61,6 @@ export const TodolistsList: React.FC<PropsType> = ({demo = false}) => {
                                 <Todolist
                                     todolist={tl}
                                     tasks={allTodolistTasks}
-                                    changeFilter={changeFilter}
-                                    addTask={addTask}
-                                    removeTodolist={removeTodolistCB}
-                                    changeTodolistTitle={changeTodolistTitleCB}
                                     demo={demo}
                                 />
                             </Paper>
