@@ -53,15 +53,10 @@ const slice = createSlice({
     },
 });
 
-const fetchTodolists = createAppAsyncThunk<{ todolists: TodolistType[] }, void>(`todo/fetchTodo`,
-    async (arg, thunkAPI) => {
-        const {dispatch, rejectWithValue} = thunkAPI
-        return thunkTryCatch(thunkAPI,async ()=>{
-            dispatch(appActions.setAppStatus({status: "loading"}));
+const fetchTodolists = createAppAsyncThunk<{ todolists: TodolistType[] }, undefined>(`todo/fetchTodo`,
+    async () => {
             const res = await todolistsAPI.getTodolists()
-            dispatch(appActions.setAppStatus({status: "succeeded"}));
             return {todolists: res.data}
-        })
     })
 
 const removeTodo = createAppAsyncThunk<{ id: string }, { id: string }>(`todo/removeTodo`,

@@ -1,5 +1,5 @@
 import {handleServerAppError, thunkTryCatch} from "common/utils";
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, isAnyOf} from "@reduxjs/toolkit";
 import {appActions} from "app/app.reducer";
 import {clearTasksAndTodolists} from "common/actions/common.actions";
 import {authAPI, LoginParamsType} from "features/auth/authApi";
@@ -15,11 +15,11 @@ const slice = createSlice({
     reducers: {},
     extraReducers: builder => {
         builder
-            .addMatcher((action: AnyAction) => {
+            .addMatcher(/*(action: AnyAction) => {
                     return action.type === "auth/login/fulfilled" ||
                         action.type === "auth/logout/fulfilled" ||
                         action.type === "app/initializeApp/fulfilled";
-                }
+                }*/isAnyOf(authThunks.login.fulfilled,authThunks.logout.fulfilled,authThunks.initializeApp.fulfilled)
                 , (state, action) => {
                     state.isLoggedIn = action.payload.isLoggedIn
                 })
