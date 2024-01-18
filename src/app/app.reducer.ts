@@ -1,5 +1,6 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {AnyAction} from "redux";
 
 
 const initialState = {
@@ -25,6 +26,16 @@ const slice = createSlice({
       state.isInitialized = action.payload.isInitialized;
     },
   },
+  extraReducers:builder =>{
+  builder.addMatcher(
+      (action:AnyAction)=>{
+        console.log(action.type)
+        return action.type.endsWith('/pending')
+      },
+      (state, action)=>{
+        state.status = 'loading'
+      })
+  }
 });
 
 

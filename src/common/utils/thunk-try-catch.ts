@@ -16,7 +16,6 @@ export const thunkTryCatch = async <T>(
 ): Promise<T | ReturnType<typeof thunkAPI.rejectWithValue>> => {
     const { dispatch, rejectWithValue } = thunkAPI;
     // диспатчим действие для установки статуса приложения на "loading"
-    dispatch(appActions.setAppStatus({ status: "loading" }));
     try {
         // возвращаем результат асинхронной логики
         return await logic();
