@@ -5,6 +5,7 @@ import {clearTasksAndTodolists} from "common/actions/common.actions";
 import {authAPI, LoginParamsType} from "features/auth/authApi";
 import {createAppAsyncThunk} from "common/utils/create-app-async-thunk";
 import {ResultCode} from "features/TodolistsList/api/todolist/todolistsApi.type";
+import {AnyAction} from "redux";
 
 const slice = createSlice({
     name: "auth",
@@ -13,22 +14,22 @@ const slice = createSlice({
     },
     reducers: {},
     extraReducers: builder => {
-        builder.addCase(login.fulfilled, (state, action) => {
-            state.isLoggedIn = action.payload.isLoggedIn
-        })
-            .addCase(logout.fulfilled, (state, action) => {
-                state.isLoggedIn = action.payload.isLoggedIn
-            })
-            .addCase(initializeApp.fulfilled, (state, action) => {
-                state.isLoggedIn = action.payload.isLoggedIn
-            })
+        builder
+            .addMatcher((action: AnyAction) => {
+                    return action.type === "auth/login/fulfilled" ||
+                        action.type === "auth/logout/fulfilled" ||
+                        action.type === "app/initializeApp/fulfilled";
+                }
+                , (state, action) => {
+                    state.isLoggedIn = action.payload.isLoggedIn
+                })
     }
 });
 
 const login = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParamsType>(`auth/login`,
     async (arg, thunkAPI) => {
         const {dispatch, rejectWithValue} = thunkAPI
-        return thunkTryCatch(thunkAPI,async ()=>{
+        return thunkTryCatch(thunkAPI, async () => {
             const res = await authAPI.login(arg)
             if (res.data.resultCode === ResultCode.success) {
                 return {isLoggedIn: true}
@@ -42,7 +43,7 @@ const login = createAppAsyncThunk<{ isLoggedIn: boolean }, LoginParamsType>(`aut
 const logout = createAppAsyncThunk<{ isLoggedIn: false }, undefined>(`auth/logout`,
     async (_, thunkAPI) => {
         const {dispatch, rejectWithValue} = thunkAPI
-        return thunkTryCatch(thunkAPI,async ()=>{
+        return thunkTryCatch(thunkAPI, async () => {
             const res = await authAPI.logout()
             if (res.data.resultCode === ResultCode.success) {
                 dispatch(clearTasksAndTodolists());
@@ -58,16 +59,16 @@ const logout = createAppAsyncThunk<{ isLoggedIn: false }, undefined>(`auth/logou
 const initializeApp = createAppAsyncThunk<{
     isLoggedIn: boolean
 }, undefined>('auth/initializeApp', async (_, thunkAPI) => {
-    const { dispatch, rejectWithValue } = thunkAPI;
+    const {dispatch, rejectWithValue} = thunkAPI;
     return thunkTryCatch(thunkAPI, async () => {
         const res = await authAPI.me();
         if (res.data.resultCode === 0) {
-            return { isLoggedIn: true };
+            return {isLoggedIn: true};
         } else {
             return rejectWithValue(null);
         }
     }).finally(() => {
-        dispatch(appActions.setAppInitialized({ isInitialized: true }));
+        dispatch(appActions.setAppInitialized({isInitialized: true}));
     });
 });
 // thunks

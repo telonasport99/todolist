@@ -26,6 +26,6 @@ export const thunkTryCatch = async <T>(
         return rejectWithValue(null);
     } finally {
         // диспатчим действие для установки статуса приложения на "idle"
-        dispatch(appActions.setAppStatus({ status: "idle" }));
+        //dispatch(appActions.setAppStatus({ status: "idle" }));
     }
 };
