@@ -26,7 +26,6 @@ type Props = {
 export const Todolist = React.memo(function ({ demo = false, ...props }: Props) {
   const {fetchTasks,addTask:addTaskThunk} = useActions(tasksThunks)
 
-
   useEffect(() => {
     if (demo) {
       return;
@@ -36,7 +35,7 @@ export const Todolist = React.memo(function ({ demo = false, ...props }: Props) 
 
   const addTask = useCallback(
     (title: string) => {
-      addTaskThunk({title,todolistId:props.todolist.id});
+     return  addTaskThunk({title,todolistId:props.todolist.id}).unwrap();
     },[props.todolist.id]
   )
   return (
