@@ -16,7 +16,9 @@ export const AddItemForm = React.memo(function ({ addItem, disabled = false }: A
       addItem(title).then(()=>{
         setTitle("");
       }).catch((err)=>{
+        if(err?.resultCode){
         setError(err.messages[0])
+          }
       });
     } else {
       setError("Title is required");

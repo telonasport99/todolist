@@ -5,7 +5,6 @@ import {clearTasksAndTodolists} from "common/actions/common.actions";
 import {authAPI, LoginParamsType} from "features/auth/authApi";
 import {createAppAsyncThunk} from "common/utils/create-app-async-thunk";
 import {ResultCode} from "features/TodolistsList/api/todolist/todolistsApi.type";
-import {AnyAction} from "redux";
 
 const slice = createSlice({
     name: "auth",
@@ -15,11 +14,7 @@ const slice = createSlice({
     reducers: {},
     extraReducers: builder => {
         builder
-            .addMatcher(/*(action: AnyAction) => {
-                    return action.type === "auth/login/fulfilled" ||
-                        action.type === "auth/logout/fulfilled" ||
-                        action.type === "app/initializeApp/fulfilled";
-                }*/isAnyOf(authThunks.login.fulfilled,authThunks.logout.fulfilled,authThunks.initializeApp.fulfilled)
+            .addMatcher(isAnyOf(authThunks.login.fulfilled,authThunks.logout.fulfilled,authThunks.initializeApp.fulfilled)
                 , (state, action) => {
                     state.isLoggedIn = action.payload.isLoggedIn
                 })
@@ -56,21 +51,19 @@ const logout = createAppAsyncThunk<{ isLoggedIn: false }, undefined>(`auth/logou
     })
 
 
-const initializeApp = createAppAsyncThunk<{
-    isLoggedIn: boolean
-}, undefined>('auth/initializeApp', async (_, thunkAPI) => {
-    const {dispatch, rejectWithValue} = thunkAPI;
-    return thunkTryCatch(thunkAPI, async () => {
-        const res = await authAPI.me();
-        if (res.data.resultCode === 0) {
-            return {isLoggedIn: true};
+const initializeApp = createAppAsyncThunk<{ isLoggedIn: boolean }, void>(
+    "app/initializeApp",
+    async (_, { rejectWithValue, dispatch }) => {
+        const res = await authAPI.me().finally(() => {
+            dispatch(appActions.setAppInitialized({ isInitialized: true }));
+        });
+        if (res.data.resultCode === ResultCode.success) {
+            return { isLoggedIn: true };
         } else {
-            return rejectWithValue(null);
+            return rejectWithValue(res.data);
         }
-    }).finally(() => {
-        dispatch(appActions.setAppInitialized({isInitialized: true}));
-    });
-});
+    },
+);
 // thunks
 
 export const authReducer = slice.reducer;
